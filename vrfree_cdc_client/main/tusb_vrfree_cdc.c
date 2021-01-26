@@ -99,6 +99,7 @@ void app_main(void) {
 
 void tud_cdc_rx_cb(uint8_t itf) {
   ESP_LOGI(TAG,"Data received on interface %d.",itf);
+  led_toggle(LED_CLR_G);
 
   uint32_t num_bytes = tud_cdc_available();
 
@@ -115,7 +116,7 @@ void tud_cdc_rx_cb(uint8_t itf) {
 
 void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 {
-	led_on();
+	led_on(LED_CLR_B);
 	ESP_LOGI(TAG,"SET_CONTROL_LINE_STATE");
   if (dtr && rts)
   {
