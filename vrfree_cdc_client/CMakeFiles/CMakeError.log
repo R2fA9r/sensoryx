@@ -1,0 +1,8 @@
+Determining if the C compiler works failed with the following output:
+Change Dir: C:/Users/rolfa/Desktop/esp-idf-chegewara/examples/peripherals/usb/tusb_sample_cdc/CMakeFiles/CMakeTmp
+
+Run Build Command:"nmake" "/nologo" "cmTC_96b76\fast"
+The system cannot find the file specified
+Generator: execution of make failed. Make command was: "nmake" "/nologo" "cmTC_96b76\fast"
+
+
