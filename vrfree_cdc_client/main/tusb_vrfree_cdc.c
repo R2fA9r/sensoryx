@@ -71,6 +71,17 @@ static void usb_device_task(void *param) {
 //   }
 // }
 
+bool l_isConnected;
+void cdc_task(void* params) {
+  (void) params;
+
+  while(1) {
+    if(l_isConnected) {
+      vrfree_connection_sendCommand(CMD_CDC_DEVICE_CONNECTED);
+    }
+    vTaskDelay(pdMS_TO_TICKS(500));
+  }
+}
 
 
 void app_main(void) {
@@ -82,6 +93,8 @@ void app_main(void) {
         .string_descriptor = NULL,
         .external_phy = false // In the most cases you need to use a `false` value
     };
+
+    l_isConnected = false;
 
     led_init();
 
@@ -105,9 +118,13 @@ void tud_cdc_rx_cb(uint8_t itf) {
 
   uint32_t bytes_read = tud_cdc_read(USB_rx_buffer,num_bytes);
 
+  tud_cdc_read_flush();
+
   vrfree_connection_onNewData(USB_rx_buffer,num_bytes);
 
   ESP_LOGI(TAG,"num bytes: %d - bytes read: %d",num_bytes, bytes_read);
+
+
 }
 
  void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const* p_line_coding) {
@@ -118,8 +135,5 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
 {
 	led_on(LED_CLR_B);
 	ESP_LOGI(TAG,"SET_CONTROL_LINE_STATE");
-  if (dtr && rts)
-  {
-    tud_cdc_write_str("Welcome to tinyUSB CDC example!!!\r\n");
-  }
+  l_isConnected = true;
 }

@@ -85,7 +85,9 @@ void vrfree_connection_sendCommand(usb_command_t cmd) {
 	ESP_LOGI(TAG,"Sending command 0x%x.",cmd);
 	m_txBuffer[0] = CMD_TYPE;
 	m_txBuffer[1] = cmd;
-	tud_cdc_write(m_txBuffer,2);
+	uint32_t bytes_written = tud_cdc_write(m_txBuffer,2);
+	ESP_LOGI(TAG,"Wrote %d bytes", bytes_written);
+	tud_cdc_write_flush();
 }
 
 void vrfree_connection_sendData(uint8_t* buf, int len) {
@@ -93,6 +95,7 @@ void vrfree_connection_sendData(uint8_t* buf, int len) {
 	m_txBuffer[0] = DATA_TYPE;
 	memcpy(m_txBuffer + 1, buf, len);
 	tud_cdc_write(m_txBuffer,len + 1);
+	tud_cdc_write_flush();
 }
 
 
@@ -100,6 +103,7 @@ void _vrfree_handleNewCommand(uint8_t* buf, int len) {
 	switch(buf[0]) {
 		case CMD_CDC_DEVICE_CONNECTED:
 		ESP_LOGI(TAG,"received command DEVICE_CONNECTED");
+		vrfree_connection_sendCommand(CMD_ENABLE_TRACKING_DATA);
 		break;
 
 		case CMD_ENABLE_TRACKING_DATA:
